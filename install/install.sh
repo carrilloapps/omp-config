@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# omp-prompt installer for bash on Linux, WSL, and macOS.
+# omp-config installer for bash on Linux, WSL, and macOS.
 # - Copies themes and refresh-stats.sh into ~/.config/oh-my-posh
 # - Inserts an idempotent block into ~/.bashrc that picks a theme by distro
 # - Auto-detects oh-my-posh binary across common install paths
@@ -11,8 +11,8 @@ THEMES="$CONF/themes"
 BASHRC="$HOME/.bashrc"
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
-START_MARKER="# >>> omp-prompt >>>"
-END_MARKER="# <<< omp-prompt <<<"
+START_MARKER="# >>> omp-config >>>"
+END_MARKER="# <<< omp-config <<<"
 
 mkdir -p "$THEMES"
 cp "$REPO_ROOT/themes/ubuntu.omp.json"  "$THEMES/ubuntu.omp.json"
@@ -22,7 +22,7 @@ chmod +x "$CONF/refresh-stats.sh"
 echo "Installed themes + refresh-stats.sh under $CONF"
 
 block=$(cat <<'EOF'
-# >>> omp-prompt >>>
+# >>> omp-config >>>
 # Auto-pick OMP theme: Ubuntu palette for Ubuntu, monochrome for everything else.
 _omp_bin=""
 for _omp_candidate in \
@@ -46,7 +46,7 @@ if [ -n "$_omp_bin" ] && [ -x "$_omp_bin" ] && [ -r "$_omp_theme" ]; then
     PROMPT_COMMAND="${PROMPT_COMMAND:+${PROMPT_COMMAND}; }source $HOME/.config/oh-my-posh/refresh-stats.sh"
 fi
 unset _omp_bin _omp_candidate _omp_theme
-# <<< omp-prompt <<<
+# <<< omp-config <<<
 EOF
 )
 
@@ -58,10 +58,10 @@ if grep -q "$START_MARKER" "$BASHRC" 2>/dev/null; then
         $0==end   {skip=0; next}
         !skip     {print}
     ' "$BASHRC" > "$BASHRC.tmp" && mv "$BASHRC.tmp" "$BASHRC"
-    echo "Updated existing omp-prompt block in $BASHRC"
+    echo "Updated existing omp-config block in $BASHRC"
 else
     printf '\n%s\n' "$block" >> "$BASHRC"
-    echo "Appended omp-prompt block to $BASHRC"
+    echo "Appended omp-config block to $BASHRC"
 fi
 
 echo

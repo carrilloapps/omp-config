@@ -1,4 +1,4 @@
-# omp-prompt
+# omp-config
 
 > A cross-platform [oh-my-posh](https://ohmyposh.dev) prompt configuration designed for developers. Three-line layout with adaptive width, system telemetry, music integration, and two color schemes (Ubuntu brand + monochrome) that switch automatically based on the host OS.
 
@@ -30,7 +30,7 @@
 
 ## Overview
 
-`omp-prompt` is a thoughtfully composed [oh-my-posh](https://ohmyposh.dev) configuration that surfaces the information developers actually need without becoming visually noisy. It detects its environment (Ubuntu, macOS, Windows, etc.) and picks an appropriate color scheme automatically, while a companion stats script feeds platform-specific telemetry (RAM, CPU load, GPU utilization, battery, currently-playing Spotify track) into the prompt through environment variables.
+`omp-config` is a thoughtfully composed [oh-my-posh](https://ohmyposh.dev) configuration that surfaces the information developers actually need without becoming visually noisy. It detects its environment (Ubuntu, macOS, Windows, etc.) and picks an appropriate color scheme automatically, while a companion stats script feeds platform-specific telemetry (RAM, CPU load, GPU utilization, battery, currently-playing Spotify track) into the prompt through environment variables.
 
 The same JSON theme files work identically on every supported platform — platform-specific behavior is isolated to a small shell/PowerShell helper that runs once per prompt render.
 
@@ -108,8 +108,8 @@ On a narrow terminal (below 130 columns), values collapse:
 ### Linux, WSL, and macOS (bash)
 
 ```bash
-git clone https://github.com/carrilloapps/omp-prompt.git
-cd omp-prompt
+git clone https://github.com/carrilloapps/omp-config.git
+cd omp-config
 bash install/install.sh
 ```
 
@@ -117,15 +117,15 @@ The installer will:
 
 1. Create `~/.config/oh-my-posh/themes/` and copy both theme JSON files there.
 2. Copy `scripts/refresh-stats.sh` to `~/.config/oh-my-posh/refresh-stats.sh`.
-3. Inject an idempotent block (between `# >>> omp-prompt >>>` and `# <<< omp-prompt <<<` markers) into `~/.bashrc`. Re-running the installer rewrites the block in place — it does not duplicate.
+3. Inject an idempotent block (between `# >>> omp-config >>>` and `# <<< omp-config <<<` markers) into `~/.bashrc`. Re-running the installer rewrites the block in place — it does not duplicate.
 
 Then open a new terminal or run `source ~/.bashrc`.
 
 ### Windows (PowerShell 7)
 
 ```powershell
-git clone https://github.com/carrilloapps/omp-prompt.git
-cd omp-prompt
+git clone https://github.com/carrilloapps/omp-config.git
+cd omp-config
 .\install\install.ps1
 ```
 
@@ -168,7 +168,7 @@ The PowerShell installer defaults to `ubuntu.omp.json`. Edit `$PROFILE` to point
 
 ### Environment-variable driven segments
 
-oh-my-posh themes don't natively support shelling out to platform-specific commands. To keep the theme JSON portable, `omp-prompt` uses a companion script that publishes its values as environment variables which the theme reads via `{{ .Env.POSH_X }}` templates.
+oh-my-posh themes don't natively support shelling out to platform-specific commands. To keep the theme JSON portable, `omp-config` uses a companion script that publishes its values as environment variables which the theme reads via `{{ .Env.POSH_X }}` templates.
 
 | Environment variable | Provided by | Read in template |
 |---|---|---|
@@ -279,7 +279,7 @@ A segment template referenced a field that doesn't exist on the current platform
 ## Project Structure
 
 ```
-omp-prompt/
+omp-config/
 ├── README.md                ← this file
 ├── LICENSE                  ← MIT
 ├── .gitignore

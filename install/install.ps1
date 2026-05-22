@@ -1,4 +1,4 @@
-# omp-prompt installer for PowerShell on Windows.
+# omp-config installer for PowerShell on Windows.
 # - Copies themes and refresh-stats.ps1 into %USERPROFILE%\.config\oh-my-posh
 # - Inserts an idempotent block into the PowerShell profile
 
@@ -16,8 +16,8 @@ Copy-Item (Join-Path $repoRoot 'themes\mono.omp.json')   $themeDir -Force
 Copy-Item (Join-Path $repoRoot 'scripts\refresh-stats.ps1') $confDir -Force
 Write-Host "Installed themes + refresh-stats.ps1 under $confDir"
 
-$startMarker = '# >>> omp-prompt >>>'
-$endMarker   = '# <<< omp-prompt <<<'
+$startMarker = '# >>> omp-config >>>'
+$endMarker   = '# <<< omp-config <<<'
 
 $block = @"
 $startMarker
@@ -44,10 +44,10 @@ if ($existing -match [regex]::Escape($startMarker)) {
     $pattern = [regex]::Escape($startMarker) + '[\s\S]*?' + [regex]::Escape($endMarker)
     $updated = [regex]::Replace($existing, $pattern, [regex]::Escape($block) -replace '\\([\s\S])', '$1')
     Set-Content -Path $profilePath -Value $updated -NoNewline
-    Write-Host "Updated existing omp-prompt block in $profilePath"
+    Write-Host "Updated existing omp-config block in $profilePath"
 } else {
     Add-Content -Path $profilePath -Value "`n$block"
-    Write-Host "Appended omp-prompt block to $profilePath"
+    Write-Host "Appended omp-config block to $profilePath"
 }
 
 Write-Host ""
