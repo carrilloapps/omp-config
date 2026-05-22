@@ -380,7 +380,13 @@ PowerShell defaults to `ubuntu.omp.json`. Edit `$PROFILE` to switch.
 
 ## Optional Integrations
 
-Beyond the prompt itself, `omp-config` plays nicely with two ecosystem tools that add **per-file icons** to `ls`/`Get-ChildItem` output. Both are detected automatically by the installers — if they're available, they're enabled; if not, the prompt still works.
+Beyond the prompt itself, `omp-config` ships with **automatic** integrations that add per-file icons to `ls` / `Get-ChildItem` output. The Unix installer auto-installs both `eza` and `icons-in-terminal`; the Windows installer auto-installs `Terminal-Icons`. None of them are required — if installation fails, the prompt still works.
+
+| Tool | Platforms | Adds | Auto-installed by |
+|---|---|---|---|
+| [**eza**](https://github.com/eza-community/eza) | Linux · WSL · macOS | `--icons` flag for `ls`/`ll`/`la`/`lt` (uses your Nerd Font) | `install/install.sh` |
+| [**icons-in-terminal**](https://github.com/sebastiencs/icons-in-terminal) | Linux · WSL · macOS | 1400+ shell variables (`$oct_*`, `$fa_*`, `$powerline_*`, …) for scripts | `install/install.sh` |
+| [**Terminal-Icons**](https://github.com/devblackops/Terminal-Icons) | Windows · PowerShell | File/folder icons in `Get-ChildItem` | `install/install.ps1` |
 
 <details>
 <summary><strong>Terminal-Icons — Windows · PowerShell</strong></summary>
@@ -422,34 +428,51 @@ Install-Module -Name Terminal-Icons -Scope CurrentUser
 </details>
 
 <details>
-<summary><strong>icons-in-terminal — Linux · WSL · macOS · bash</strong></summary>
+<summary><strong>eza — Linux · WSL · macOS · bash</strong></summary>
 
-[sebastiencs/icons-in-terminal](https://github.com/sebastiencs/icons-in-terminal) is a Linux/Unix tool that supplies its own icon font and shell scripts to add icons to `ls`, `tree`, file managers, and prompts. It's an alternative to Nerd Fonts when you'd rather not patch your existing terminal font, or a complement when you want a different icon set.
+[eza](https://github.com/eza-community/eza) is a modern replacement for `ls` with native `--icons` support that reads from your Nerd Font. The installer detects your package manager and runs the right command:
 
-**Automatic detection:** `install.sh` injects a loop into `~/.bashrc` that sources `icons-in-terminal`'s bash integration if it's installed in any standard location:
+| Detector | Command run |
+|---|---|
+| `brew` (macOS / Linuxbrew) | `brew install eza` |
+| `apt-get` (Ubuntu / Debian) | `sudo apt-get install -y eza` |
+| `pacman` (Arch) | `sudo pacman -S --noconfirm eza` |
+| `dnf` (Fedora) | `sudo dnf install -y eza` |
+| `cargo` (Rust) | `cargo install eza` |
+
+After install, `install.sh` adds four aliases to the `~/.bashrc` block:
 
 ```bash
-for _iit_candidate in \
-    "$HOME/.local/share/icons-in-terminal/icons_bash.sh" \
-    "$HOME/.icons-in-terminal/icons_bash.sh" \
-    "/usr/local/share/icons-in-terminal/icons_bash.sh"; do
-    if [ -r "$_iit_candidate" ]; then . "$_iit_candidate"; break; fi
-done
+alias ls='eza --icons --group-directories-first'
+alias ll='eza --icons -la --group-directories-first'
+alias la='eza --icons -a --group-directories-first'
+alias lt='eza --icons --tree --level=2 --group-directories-first'
+```
+
+Aliases are wrapped in `if command -v eza >/dev/null` so they only apply when eza is installed. If `eza` is uninstalled later, the aliases vanish on next shell start and `ls` falls back to coreutils.
+
+</details>
+
+<details>
+<summary><strong>icons-in-terminal — Linux · WSL · macOS · bash</strong></summary>
+
+[sebastiencs/icons-in-terminal](https://github.com/sebastiencs/icons-in-terminal) supplies its own icon font and shell scripts. It does NOT modify `ls` directly — instead it exports 1400+ shell variables (`$oct_git_branch`, `$fa_house`, `$powerline_branch`, …) that you embed in custom scripts and prompts.
+
+**Automatic install:** `install.sh` clones the repo to a temp dir, runs its `./install.sh` (which installs `~/.fonts/icons-in-terminal.ttf`, generates `~/.config/fontconfig/conf.d/30-icons.conf`, copies bash helpers to `~/.local/share/icons-in-terminal/`, and runs `fc-cache`), then cleans up.
+
+Requires `git` and `fc-cache` (fontconfig). On Debian/Ubuntu: `sudo apt install git fontconfig`.
+
+**Auto-detection at shell start:** the `~/.bashrc` block sources `icons_bash.sh` from any of these locations:
+
+```bash
+~/.local/share/icons-in-terminal/icons_bash.sh   # default install
+~/.icons-in-terminal/icons_bash.sh                # legacy
+/usr/local/share/icons-in-terminal/icons_bash.sh  # system-wide
 ```
 
 If you install icons-in-terminal *after* running `omp-config`'s installer, opening a new terminal picks it up automatically — no reinstall needed.
 
-**Manual install of icons-in-terminal:**
-
-```bash
-git clone https://github.com/sebastiencs/icons-in-terminal.git
-cd icons-in-terminal
-./install.sh
-```
-
-That installs the `icons-in-terminal` font under `~/.local/share/fonts/`, generates the bash/zsh/fish helpers, and prints a one-line config snippet for your terminal.
-
-**Compatible fonts:** the project provides its own patched font (`icons-in-terminal.ttf`). Configure your terminal to use it, or set it as a fallback after your primary Nerd Font.
+**Compatible fonts:** the project's `icons-in-terminal.ttf` is installed and registered with `fontconfig` automatically. Configure your terminal to use it as a fallback after your primary Nerd Font.
 
 **Windows / PowerShell:** not supported (the project is Unix-only). Use [Terminal-Icons](#optional-integrations) instead.
 
