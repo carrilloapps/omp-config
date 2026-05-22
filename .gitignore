@@ -1,0 +1,14 @@
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# OMP runtime files (don't ship caches)
+.posh_*
+*.cache
