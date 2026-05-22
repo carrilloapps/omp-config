@@ -77,6 +77,7 @@ Most prompt configurations leak details from their host's OS, package manager, o
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Configuration](#configuration)
+- [Optional Integrations](#optional-integrations)
 - [How It Works](#how-it-works)
 - [Themes](#themes)
 - [Customization](#customization)
@@ -148,7 +149,8 @@ Most prompt configurations leak details from their host's OS, package manager, o
 
 - [**oh-my-posh**](https://ohmyposh.dev/docs/installation/prompt) **v22 or newer**
 - A **Nerd Font** configured in your terminal — `Mono` variants render icons in a single cell
-  - Recommended: `CaskaydiaCove Nerd Font Mono`, `FiraCode Nerd Font Mono`, `0xProto Nerd Font Mono`
+  - Recommended: `CaskaydiaCove Nerd Font Mono`, `FiraCode Nerd Font Mono`, `0xProto Nerd Font Mono`, `MesloLGS NF`
+  - These fonts also fully cover [Terminal-Icons](#optional-integrations) on Windows out of the box
 - For GPU telemetry: NVIDIA GPU with `nvidia-smi` on PATH (or at `/usr/lib/wsl/lib/nvidia-smi` on WSL)
 - For Spotify badge: the desktop Spotify client running
 - For Linux desktop Spotify integration: `playerctl` (`apt install playerctl` · `pacman -S playerctl` · `brew install playerctl`)
@@ -375,6 +377,99 @@ The bash installer's injected block reads `/etc/os-release`:
 - anything else → `mono.omp.json`
 
 PowerShell defaults to `ubuntu.omp.json`. Edit `$PROFILE` to switch.
+
+## Optional Integrations
+
+Beyond the prompt itself, `omp-config` plays nicely with two ecosystem tools that add **per-file icons** to `ls`/`Get-ChildItem` output. Both are detected automatically by the installers — if they're available, they're enabled; if not, the prompt still works.
+
+<details>
+<summary><strong>Terminal-Icons — Windows · PowerShell</strong></summary>
+
+[devblackops/Terminal-Icons](https://github.com/devblackops/Terminal-Icons) is a PowerShell module that adds Nerd-Font icons to `Get-ChildItem` (`ls`, `dir`) based on file type and extension. It uses the same Nerd Font already required by `omp-config`, so there is no additional font installation.
+
+**Automatic installation:** `install.ps1` checks for the module and installs it from the PowerShell Gallery when missing:
+
+```powershell
+Install-Module -Name Terminal-Icons -Scope CurrentUser -Force
+```
+
+The installer's `$PROFILE` block then imports it on every shell start:
+
+```powershell
+if (Get-Module -ListAvailable -Name Terminal-Icons) {
+    Import-Module Terminal-Icons -ErrorAction SilentlyContinue
+}
+```
+
+**Manual install:**
+
+```powershell
+Install-Module -Name Terminal-Icons -Scope CurrentUser
+```
+
+**Compatible fonts:** any Nerd Font Mono variant. The recommended fonts in the [Requirements](#requirements) section all work.
+
+**Result:** `ls` shows folder/file icons colored by type:
+
+```
+   src/
+   package.json
+   tsconfig.json
+   .env
+   README.md
+```
+
+</details>
+
+<details>
+<summary><strong>icons-in-terminal — Linux · WSL · macOS · bash</strong></summary>
+
+[sebastiencs/icons-in-terminal](https://github.com/sebastiencs/icons-in-terminal) is a Linux/Unix tool that supplies its own icon font and shell scripts to add icons to `ls`, `tree`, file managers, and prompts. It's an alternative to Nerd Fonts when you'd rather not patch your existing terminal font, or a complement when you want a different icon set.
+
+**Automatic detection:** `install.sh` injects a loop into `~/.bashrc` that sources `icons-in-terminal`'s bash integration if it's installed in any standard location:
+
+```bash
+for _iit_candidate in \
+    "$HOME/.local/share/icons-in-terminal/icons_bash.sh" \
+    "$HOME/.icons-in-terminal/icons_bash.sh" \
+    "/usr/local/share/icons-in-terminal/icons_bash.sh"; do
+    if [ -r "$_iit_candidate" ]; then . "$_iit_candidate"; break; fi
+done
+```
+
+If you install icons-in-terminal *after* running `omp-config`'s installer, opening a new terminal picks it up automatically — no reinstall needed.
+
+**Manual install of icons-in-terminal:**
+
+```bash
+git clone https://github.com/sebastiencs/icons-in-terminal.git
+cd icons-in-terminal
+./install.sh
+```
+
+That installs the `icons-in-terminal` font under `~/.local/share/fonts/`, generates the bash/zsh/fish helpers, and prints a one-line config snippet for your terminal.
+
+**Compatible fonts:** the project provides its own patched font (`icons-in-terminal.ttf`). Configure your terminal to use it, or set it as a fallback after your primary Nerd Font.
+
+**Windows / PowerShell:** not supported (the project is Unix-only). Use [Terminal-Icons](#optional-integrations) instead.
+
+</details>
+
+<details>
+<summary><strong>Choosing between Nerd Fonts and icons-in-terminal</strong></summary>
+
+You can run both, but typically you pick one as your terminal's primary icon font.
+
+| | Nerd Font (default for `omp-config`) | icons-in-terminal |
+|---|---|---|
+| Distribution | Single patched font replaces your existing terminal font | Separate icon-only font, set as fallback |
+| Required by `omp-config` prompt | Yes — every glyph in the prompt is from Nerd Font ranges | No |
+| Pairs with | Terminal-Icons (PowerShell) | Its own `icons_bash.sh` / `icons_zsh.sh` |
+| Best when | You want one font that handles everything | You want a different icon set than NF, or already have your editor font set |
+
+The prompt itself (`omp-config` themes) **requires Nerd Font**. `icons-in-terminal` only affects `ls` and similar commands — it never modifies the prompt.
+
+</details>
 
 ## How It Works
 

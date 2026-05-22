@@ -46,6 +46,17 @@ if [ -n "$_omp_bin" ] && [ -x "$_omp_bin" ] && [ -r "$_omp_theme" ]; then
     PROMPT_COMMAND="${PROMPT_COMMAND:+${PROMPT_COMMAND}; }source $HOME/.config/oh-my-posh/refresh-stats.sh"
 fi
 unset _omp_bin _omp_candidate _omp_theme
+
+# Optional: icons-in-terminal (sebastiencs/icons-in-terminal) — adds file/folder
+# icon glyphs to ls and other tools. Sourced only when its bash integration is
+# present. Install instructions: https://github.com/sebastiencs/icons-in-terminal
+for _iit_candidate in \
+    "$HOME/.local/share/icons-in-terminal/icons_bash.sh" \
+    "$HOME/.icons-in-terminal/icons_bash.sh" \
+    "/usr/local/share/icons-in-terminal/icons_bash.sh"; do
+    if [ -r "$_iit_candidate" ]; then . "$_iit_candidate"; break; fi
+done
+unset _iit_candidate
 # <<< omp-config <<<
 EOF
 )
