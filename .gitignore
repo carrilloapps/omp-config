@@ -1,14 +1,115 @@
-# Editors
+# ---------- macOS ----------
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# ---------- Windows ----------
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# ---------- Linux ----------
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ---------- Editors / IDEs ----------
 .vscode/
 .idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+.history/
 *.swp
 *.swo
+*.swn
+.netrwhist
+Session.vim
+tags
+.tags
+.tags_sorted_by_file
+.cache/
+.ccls-cache/
+.clangd/
+.ccache/
+
+# ---------- Vim / Emacs ----------
 *~
+\#*\#
+.\#*
+auto-save-list
+tramp
+.elc
 
-# OS
-.DS_Store
-Thumbs.db
+# ---------- Logs / temp ----------
+*.log
+logs/
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
 
-# OMP runtime files (don't ship caches)
+# ---------- Archives (don't commit by accident) ----------
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+
+# ---------- Local environment ----------
+.env
+.env.local
+.env.*.local
+.envrc
+
+# ---------- oh-my-posh runtime caches ----------
+# These are produced by refresh-stats.sh / refresh-stats.ps1 at runtime
 .posh_*
-*.cache
+posh_*.cache
+
+# ---------- Node ----------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.pytest_cache/
+
+# ---------- Misc ----------
+*.pid
+*.seed
+*.pid.lock
